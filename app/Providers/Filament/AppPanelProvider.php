@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Http\Middleware\TrustProxies;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -26,7 +27,11 @@ class AppPanelProvider extends PanelProvider
             ->default()
             ->id('app')
             ->path('')
+            ->profile()
             ->login()
+            ->registration()
+            ->emailVerification()
+            ->passwordReset()
             ->colors([
                 'primary' => Color::Rose,
             ])
@@ -51,6 +56,7 @@ class AppPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                TrustProxies::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

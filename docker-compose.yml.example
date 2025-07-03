@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  monitoring-kwh:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: monitoring-kwh
+    ports:
+      - "8080:80"
+    volumes:
+      - ./storage:/app/storage
+    environment:
+      - TZ=Asia/Jakarta
+      - APP_ENV=local
+      - APP_DEBUG=true
+    networks:
+      - tunnel
+
+networks:
+  tunnel:
+    external: true
