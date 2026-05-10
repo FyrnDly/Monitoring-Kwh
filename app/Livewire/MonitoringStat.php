@@ -52,10 +52,10 @@ class MonitoringStat extends BaseWidget
             Stat::make('Arus (A)', round($datasets->ampere, 2))
                 ->description('Total Arus (A) yang mengalir')
                 ->color('warning'),
-            Stat::make('Daya (W)', round($datasets->ampere, 2))
+            Stat::make('Daya (W)', round($datasets->power, 2))
                 ->description('Total Daya (W) yang digunakan')
                 ->color('success'),
-            Stat::make('Energy (Kwh)', round($datasets->ampere, 2))
+            Stat::make('Energy (Kwh)', round($datasets->energy, 2))
                 ->description('Rata-rata Energi (Kwh) yang digunakan')
                 ->color('info'),
             Stat::make('Frekuensi (Hz)', round($datasets->frequency, 2))
