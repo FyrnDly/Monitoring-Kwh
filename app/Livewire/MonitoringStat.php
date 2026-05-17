@@ -39,33 +39,37 @@ class MonitoringStat extends BaseWidget
         $datasets = Log::where('device_id', $data['device_id'])
             ->whereBetween('time_stamp', [$start, $end])
             ->selectRaw('
-                SUM(ampere) AS ampere,
-                SUM(power) AS power,
-                AVG(energy) AS energy,
-                AVG(frequency) AS frequency,
-                SUM(power_factor) AS power_factor,
-                AVG(temperature) AS temperature,
-                AVG(humidity) AS humidity
+                AVG(ampere) AS avg_ampere,
+                AVG(power) AS avg_power,
+                MAX(energy) - MIN(energy) AS total_energy,
+                AVG(frequency) AS avg_frequency,
+                AVG(temperature) AS avg_temperature,
+                AVG(humidity) AS avg_humidity
             ')->first();
 
         return [
-            Stat::make('Arus (A)', round($datasets->ampere, 2))
-                ->description('Total Arus (A) yang mengalir')
+            Stat::make('Arus Rata-rata (A)', round($datasets->avg_ampere, 2))
+                ->description('Beban arus rata-rata dalam periode ini')
                 ->color('warning'),
-            Stat::make('Daya (W)', round($datasets->power, 2))
-                ->description('Total Daya (W) yang digunakan')
+                
+            Stat::make('Daya Rata-rata (W)', round($datasets->avg_power, 2))
+                ->description('Beban daya rata-rata dalam periode ini')
                 ->color('success'),
-            Stat::make('Energy (Kwh)', round($datasets->energy, 2))
-                ->description('Rata-rata Energi (Kwh) yang digunakan')
+                
+            Stat::make('Total Energy (kWh)', round($datasets->total_energy, 2))
+                ->description('Total pemakaian listrik (Selisih Max-Min)')
                 ->color('info'),
-            Stat::make('Frekuensi (Hz)', round($datasets->frequency, 2))
-                ->description('Rata-rata frekuensi (Hz) yang digunakan')
+
+            Stat::make('Frekuensi (Hz)', round($datasets->avg_frequency, 2))
+                ->description('Rata-rata frekuensi listrik')
                 ->color('gray'),
-            Stat::make('Suhu (C)', round($datasets->temperature, 2))
-                ->description('Rata-rata Suhu Perangkat Selama Monitoring')
+
+            Stat::make('Suhu (C)', round($datasets->avg_temperature, 2))
+                ->description('Rata-rata Suhu Perangkat')
                 ->color('info'),
-            Stat::make('Kelembapan (%)', round($datasets->humidity, 2))
-                ->description('Rata-rata Kelembapan Perangkat Selama Monitoring')
+
+            Stat::make('Kelembapan (%)', round($datasets->avg_humidity, 2))
+                ->description('Rata-rata Kelembapan Perangkat')
                 ->color('warning'),
         ];
     }
