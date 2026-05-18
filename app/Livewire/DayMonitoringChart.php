@@ -33,13 +33,14 @@ class DayMonitoringChart extends ChartWidget
                 $hour => $this->emptyMetrics()
             ]);
 
+            // Diperbaiki menggunakan AVG dan (MAX - MIN) untuk energi
             $stats = Log::selectRaw('
                     DATE_FORMAT(time_stamp, "%H") as hour,
-                    SUM(ampere) as ampere,
-                    SUM(power) as power,
-                    SUM(energy) as energy,
-                    SUM(frequency) as frequency,
-                    SUM(power_factor) as power_factor,
+                    AVG(ampere) as ampere,
+                    AVG(power) as power,
+                    (MAX(energy) - MIN(energy)) as energy,
+                    AVG(frequency) as frequency,
+                    AVG(power_factor) as power_factor,
                     AVG(temperature) as temperature,
                     AVG(humidity) as humidity
                 ')
@@ -68,13 +69,14 @@ class DayMonitoringChart extends ChartWidget
             $date => $this->emptyMetrics()
         ]);
 
+        // Diperbaiki menggunakan AVG dan (MAX - MIN) untuk energi
         $stats = Log::selectRaw('
                 DATE_FORMAT(time_stamp, "%Y-%m-%d") as full_date,
-                SUM(ampere) as ampere,
-                SUM(power) as power,
-                SUM(energy) as energy,
-                SUM(frequency) as frequency,
-                SUM(power_factor) as power_factor,
+                AVG(ampere) as ampere,
+                AVG(power) as power,
+                (MAX(energy) - MIN(energy)) as energy,
+                AVG(frequency) as frequency,
+                AVG(power_factor) as power_factor,
                 AVG(temperature) as temperature,
                 AVG(humidity) as humidity
             ')
@@ -129,43 +131,43 @@ class DayMonitoringChart extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Ampere (A)',
-                    'data' => $data->pluck('ampere')->values()->all(),
+                    'data' => $data->pluck('ampere')->map(fn($v) => round($v, 2))->values()->all(),
                     'borderColor' => '#FFDF3F',
                     'backgroundColor' => '#FFDF3F',
                 ],
                 [
                     'label' => 'Daya (W)',
-                    'data' => $data->pluck('power')->values()->all(),
+                    'data' => $data->pluck('power')->map(fn($v) => round($v, 2))->values()->all(),
                     'borderColor' => '#72C5FF',
                     'backgroundColor' => '#72C5FF',
                 ],
                 [
                     'label' => 'Energi (kWh)',
-                    'data' => $data->pluck('energy')->values()->all(),
+                    'data' => $data->pluck('energy')->map(fn($v) => round($v, 2))->values()->all(),
                     'borderColor' => '#FF916B',
                     'backgroundColor' => '#FF916B',
                 ],
                 [
                     'label' => 'Frekuensi (Hz)',
-                    'data' => $data->pluck('frequency')->values()->all(),
+                    'data' => $data->pluck('frequency')->map(fn($v) => round($v, 2))->values()->all(),
                     'borderColor' => '#9CE358',
                     'backgroundColor' => '#9CE358',
                 ],
                 [
                     'label' => 'Faktor Daya',
-                    'data' => $data->pluck('power_factor')->values()->all(),
+                    'data' => $data->pluck('power_factor')->map(fn($v) => round($v, 2))->values()->all(),
                     'borderColor' => '#C181FF',
                     'backgroundColor' => '#C181FF',
                 ],
                 [
                     'label' => 'Suhu (°C)',
-                    'data' => $data->pluck('temperature')->values()->all(),
+                    'data' => $data->pluck('temperature')->map(fn($v) => round($v, 2))->values()->all(),
                     'borderColor' => '#2262B7',
                     'backgroundColor' => '#2262B7',
                 ],
                 [
                     'label' => 'Kelembapan (%)',
-                    'data' => $data->pluck('humidity')->values()->all(),
+                    'data' => $data->pluck('humidity')->map(fn($v) => round($v, 2))->values()->all(),
                     'borderColor' => '#0D307A',
                     'backgroundColor' => '#0D307A',
                 ],
